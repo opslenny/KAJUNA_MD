@@ -1,0 +1,43 @@
+const path = require('path');
+const fs = require('fs');
+
+module.exports = {
+  name: 'KAJUNA_MD',
+  prefix: '.',
+  version: '1.0.0',
+  owner: 'KAJUNA',
+  mongoUri: process.env.MONGODB_URI || '',
+  whatsappNumber: process.env.WHATSAPP_NUMBER || '',
+  sessionDir: path.join(__dirname, 'src', 'Session'),
+  tmpDir: path.join(__dirname, 'tmp'),
+  databaseDir: path.join(__dirname, 'src', 'Database'),
+  
+  // API Keys
+  geminiKey: process.env.GEMINI_API_KEY || '',
+  
+  // Server Config
+  port: process.env.PORT || 3000,
+  serverUrl: process.env.SERVER_URL || 'http://localhost:3000',
+  
+  // Features
+  features: {
+    autoReply: true,
+    antiBot: false,
+    autoDelete: 24,
+    groupSettings: true,
+    mediaDownload: true,
+    imageSearch: true,
+    emojiSupport: true,
+    aiChat: true
+  },
+
+  // Ensure directories exist
+  init: function() {
+    const dirs = [this.sessionDir, this.tmpDir, this.databaseDir];
+    dirs.forEach(dir => {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+    });
+  }
+};
