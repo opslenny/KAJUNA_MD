@@ -1,0 +1,31 @@
+{
+  "name": "kajuna-md",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot - KAJUNA_MD",
+  "main": "index.js",
+  "engines": {
+    "node": "18.x"
+  },
+  "env": {
+    "WHATSAPP_NUMBER": {
+      "description": "Your WhatsApp number (digits only, e.g., 255760898010)",
+      "value": ""
+    },
+    "SERVER_URL": {
+      "description": "Your Cyclic app URL (e.g., https://kajuna-md-abc123.cyclic.app)",
+      "value": ""
+    },
+    "NODE_ENV": {
+      "description": "Environment type",
+      "value": "production"
+    },
+    "MONGODB_URI": {
+      "description": "MongoDB connection string (optional)",
+      "value": ""
+    },
+    "GEMINI_API_KEY": {
+      "description": "Google Gemini API key for AI features (optional)",
+      "value": ""
+    }
+  }
+}

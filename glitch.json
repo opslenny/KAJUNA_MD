@@ -1,0 +1,10 @@
+# Glitch Configuration
+# This file tells Glitch how to run your bot
+
+{
+  "install": "npm install",
+  "start": "node index.js",
+  "watch": {
+    "throttle": 5000
+  }
+}

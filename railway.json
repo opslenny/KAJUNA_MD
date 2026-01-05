@@ -1,0 +1,16 @@
+# Railway Configuration
+# This tells Railway how to build and run your app
+
+builder = "heroku"
+
+[build]
+buildpacks = ["heroku/nodejs"]
+
+[build.env]
+NODE_ENV = "production"
+
+[[services]]
+name = "kajuna-md"
+buildCommand = "npm install"
+startCommand = "node index.js"
+port = 3000

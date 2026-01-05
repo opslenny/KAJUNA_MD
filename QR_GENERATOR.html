@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAJUNA_MD - QR Code Scanner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .qr-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #qr {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        .url-input {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-direction: column;
+        }
+        
+        input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #764ba2;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .status.loading {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .instructions {
+            text-align: left;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 15px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 KAJUNA_MD Bot</h1>
+        <p class="subtitle">WhatsApp QR Code Scanner</p>
+        
+        <div class="url-input">
+            <input 
+                type="text" 
+                id="projectName" 
+                placeholder="Enter your Vercel project name (e.g., kajuna-md-xyz)"
+            >
+            <button onclick="generateQR()">Get QR Code</button>
+        </div>
+        
+        <div style="margin: 20px 0; text-align: center; color: #666; font-size: 14px;">
+            OR
+        </div>
+        
+        <div class="url-input">
+            <textarea 
+                id="pasteQR" 
+                placeholder="Paste QR code data URL or image URL from Vercel here"
+                style="min-height: 80px; font-family: monospace; font-size: 12px;"
+            ></textarea>
+            <button onclick="pasteQR()">Use Pasted QR</button>
+        </div>
+        
+        <div class="qr-container">
+            <div id="status" class="status loading">Enter your Vercel URL and click "Get QR Code" OR paste QR data above</div>
+            <img id="qr" src="" alt="QR Code" style="display: none;">
+        </div>
+        
+        <div class="instructions">
+            <h3>📱 How to Scan:</h3>
+            <ol>
+                <li>Open <strong>WhatsApp</strong> on your phone</li>
+                <li>Go to <strong>Settings</strong> → <strong>Linked Devices</strong></li>
+                <li>Click <strong>Link a Device</strong></li>
+                <li>Scan the QR code above with your phone camera</li>
+                <li>Confirm linking on WhatsApp</li>
+                <li>Send <strong>.ping</strong> to test the bot!</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        function generateQR() {
+            const projectName = document.getElementById('projectName').value.trim();
+            const statusDiv = document.getElementById('status');
+            const qrImg = document.getElementById('qr');
+            
+            if (!projectName) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ Please enter your Vercel project name';
+                qrImg.style.display = 'none';
+                return;
+            }
+            
+            // Automatically construct the URL
+            const vercelUrl = `https://${projectName}.vercel.app/api/bot?action=qr`;
+            
+            statusDiv.className = 'status loading';
+            statusDiv.innerHTML = '⏳ Fetching QR code...';
+            qrImg.style.display = 'none';
+            
+            fetch(vercelUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Project not found or not deployed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.qr) {
+                        qrImg.src = data.qr;
+                        qrImg.style.display = 'block';
+                        statusDiv.className = 'status success';
+                        statusDiv.innerHTML = '✅ QR Code ready! Scan with your WhatsApp phone';
+                    } else {
+                        throw new Error('No QR code received');
+                    }
+                })
+                .catch(error => {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = '❌ Error: ' + error.message + '<br>Make sure your project is deployed on Vercel';
+                    qrImg.style.display = 'none';
+                    console.error('Error:', error);
+                });
+        }
+        
+        // Load from localStorage if previously entered
+        window.addEventListener('load', function() {
+            const saved = localStorage.getItem('projectName');
+            if (saved) {
+                document.getElementById('projectName').value = saved;
+            }
+        });
+        
+        // Save project name when typing
+        document.getElementById('projectName').addEventListener('change', function() {
+            localStorage.setItem('projectName', this.value);
+        });
+        
+        // Allow Enter key to generate QR
+        document.getElementById('projectName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateQR();
+            }
+        });
+        
+        function pasteQR() {
+            const pastedData = document.getElementById('pasteQR').value.trim();
+            const statusDiv = document.getElementById('status');
+            const qrImg = document.getElementById('qr');
+            
+            if (!pastedData) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ Please paste QR code data or URL';
+                qrImg.style.display = 'none';
+                return;
+            }
+            
+            // Check if it's a URL or base64 data
+            if (pastedData.startsWith('http://') || pastedData.startsWith('https://')) {
+                // It's a URL
+                qrImg.src = pastedData;
+                qrImg.style.display = 'block';
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✅ QR Code loaded! Scan with your WhatsApp phone';
+            } else if (pastedData.startsWith('data:')) {
+                // It's base64 data
+                qrImg.src = pastedData;
+                qrImg.style.display = 'block';
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✅ QR Code loaded! Scan with your WhatsApp phone';
+            } else {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '❌ Invalid format. Please paste a complete data URL or image URL';
+                qrImg.style.display = 'none';
+            }
+        }
+        
+        // Allow Enter key to paste QR
+        document.getElementById('pasteQR').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                pasteQR();
+            }
+        });
+    </script>
+</body>
+</html>
