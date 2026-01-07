@@ -319,4 +319,4 @@ This bot is for educational purposes. Use responsibly and comply with WhatsApp's
 
 ---
 
-**Made with ❤️ by KAJUNA_MD Development Team**
+**Made with 💀 by KAJUNA_MD Development Team**
